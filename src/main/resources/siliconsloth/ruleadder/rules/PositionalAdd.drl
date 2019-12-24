@@ -1,0 +1,63 @@
+package siliconsloth.ruleadder.rules
+ 
+import siliconsloth.ruleadder.RuleAdder.*;
+import siliconsloth.ruleadder.Facts.*;
+
+rule "Positional Add Request"
+	when
+		PositionalAddRequest(n1 : name1, n2 : name2, pos: position)
+		InputDigit(name == n1, position == pos, d1 : digit)
+		InputDigit(name == n2, position == pos, d2 : digit)
+		not AddRequest(operand1 == d1, operand2 == d2)
+		not PositionalAddResult(name1 == n1, name2 == n2, position == pos)
+	then
+		insert(new AddRequest(d1, d2));
+end
+
+rule "Positional Add Zero"
+	when
+		PositionalAddRequest(n1 : name1, n2 : name2, position == 0)
+		InputDigit(name == n1, position == 0, d1 : digit)
+		InputDigit(name == n2, position == 0, d2 : digit)
+		AddResult(operand1 == d1, operand2 == d2, res : result, car : carry)
+		not PositionalAddResult(name1 == n1, name2 == n2, position == 0)
+	then
+		insert(new PositionalAddResult(n1, n2, 0, res, car));
+end
+
+rule "Positional Add No Carry"
+	when
+		PositionalAddRequest(n1 : name1, n2 : name2, pos : position != 0)
+		InputDigit(name == n1, position == pos, d1 : digit)
+		InputDigit(name == n2, position == pos, d2 : digit)
+		PositionalAddResult(name1 == n1, name2 == n2, position == pos-1, carry == false)
+		AddResult(operand1 == d1, operand2 == d2, res : result, car : carry)
+	then
+		insert(new PositionalAddResult(n1, n2, pos, res, car));
+end
+
+rule "Positional Add Successor Request"
+	when
+		PositionalAddRequest(n1 : name1, n2 : name2, pos : position != 0)
+		InputDigit(name == n1, position == pos, d1 : digit)
+		InputDigit(name == n2, position == pos, d2 : digit)
+		PositionalAddResult(name1 == n1, name2 == n2, position == pos-1, carry == true)
+		AddResult(operand1 == d1, operand2 == d2, res : result, car : carry)
+		not AddRequest(operand1 == res, operand2 == Digit.ONE)
+	then
+		insert(new AddRequest(res, Digit.ONE));
+end
+
+rule "Positional Add With Carry"
+	when
+		PositionalAddRequest(n1 : name1, n2 : name2, pos : position != 0)
+		InputDigit(name == n1, position == pos, d1 : digit)
+		InputDigit(name == n2, position == pos, d2 : digit)
+		PositionalAddResult(name1 == n1, name2 == n2, position == pos-1, carry == true)
+		AddResult(operand1 == d1, operand2 == d2, res : result, car : carry)
+		AddResult(operand1 == res, operand2 == Digit.ONE, resSucc: result, succCar : carry)
+	then
+		insert(new PositionalAddResult(n1, n2, pos, resSucc, car || succCar));
+end
+		
+		

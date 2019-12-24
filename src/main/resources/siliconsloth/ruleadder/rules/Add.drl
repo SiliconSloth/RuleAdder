@@ -1,0 +1,49 @@
+package siliconsloth.ruleadder.rules
+ 
+import siliconsloth.ruleadder.RuleAdder.*;
+import siliconsloth.ruleadder.Facts.*;
+ 
+rule "Add Zero"
+    when
+        AddRequest(op1 : operand1, operand2 == Digit.ZERO)
+        not AddResult(operand1 == op1, operand2 == Digit.ZERO)
+    then
+        insert(new AddResult(op1, Digit.ZERO, op1, false));
+end
+
+rule "Add Successor Request"
+	when
+		AddRequest(op1 : operand1, op2 : operand2 != Digit.ZERO)
+		not Successor(operand == op1)
+	then
+		insert(new SuccessorRequest(op1));
+end
+
+rule "Add Predecessor Request"
+	when
+		AddRequest(op1 : operand1, op2 : operand2 != Digit.ZERO)
+		not Predecessor(operand == op2)
+	then
+		insert(new PredecessorRequest(op2));
+end
+
+rule "Add Recurse"
+	when
+		AddRequest(op1 : operand1, op2 : operand2 != Digit.ZERO)
+		Successor(operand == op1, succ : successor)
+		Predecessor(operand == op2, pred : predecessor)
+		not AddResult(operand1 == succ, operand2 == pred)
+	then
+		insert(new AddRequest(succ, pred));
+end
+
+rule "Add Equate"
+	when
+		AddRequest(op1 : operand1, op2 : operand2 != Digit.ZERO)
+		Successor(operand == op1, succ : successor)
+		Predecessor(operand == op2, pred : predecessor)
+		AddResult(operand1 == succ, operand2 == pred, res : result, car : carry)
+		not AddResult(operand1 == op1, operand2 == op2)
+	then
+		insert(new AddResult(op1, op2, res, car || op1 == Digit.NINE));
+end

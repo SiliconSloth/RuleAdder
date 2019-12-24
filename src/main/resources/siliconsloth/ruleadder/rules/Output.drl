@@ -1,0 +1,40 @@
+package siliconsloth.ruleadder.rules
+ 
+import siliconsloth.ruleadder.RuleAdder;
+import siliconsloth.ruleadder.RuleAdder.*;
+import siliconsloth.ruleadder.Facts.*;
+
+/*rule "Print Successor Result"
+	when
+		Successor(op : operand, succ : successor)
+	then
+		System.out.println("Successor of " + op + " is " + succ);
+end
+
+rule "Print Predecessor Result"
+	when
+		Predecessor(op : operand, pred : predecessor)
+	then
+		System.out.println("Predecessor of " + op + " is " + pred);
+end
+
+rule "Print Add Result"
+	when
+		AddResult(op1 : operand1, op2 : operand2, res : result, car : carry)
+	then 
+		System.out.println(op1 + " plus " + op2 + " is " + res + (car? " with carry" : ""));
+end
+
+rule "Print Positional Add Result"
+	when
+		PositionalAddResult(pos : position, val : value)
+	then
+		System.out.println("Digit at " + pos + " is " + val);
+end*/
+
+rule "Store Positional Add Result"
+	when
+		res : PositionalAddResult()
+	then
+		RuleAdder.results.put(res.getPosition(), res);
+end

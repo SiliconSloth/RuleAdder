@@ -1,0 +1,90 @@
+package siliconsloth.ruleadder.rules
+ 
+import siliconsloth.ruleadder.RuleAdder.*;
+import siliconsloth.ruleadder.Facts.*;
+
+rule "Successor Compute"
+	when
+		SuccessorRequest(op : operand)
+		not Successor(operand == op)
+	then
+		Digit succ;
+		switch (op) {
+		case ZERO:
+			succ = Digit.ONE;
+			break;
+		case ONE:
+			succ = Digit.TWO;
+			break;
+		case TWO:
+			succ = Digit.THREE;
+			break;
+		case THREE:
+			succ = Digit.FOUR;
+			break;
+		case FOUR:
+			succ = Digit.FIVE;
+			break;
+		case FIVE:
+			succ = Digit.SIX;
+			break;
+		case SIX:
+			succ = Digit.SEVEN;
+			break;
+		case SEVEN:
+			succ = Digit.EIGHT;
+			break;
+		case EIGHT:
+			succ = Digit.NINE;
+			break;
+		case NINE:
+			succ = Digit.ZERO;
+			break;
+		default:
+			throw new RuntimeException("Unkonwn digit");
+		}
+		insert(new Successor(op, succ));
+end
+
+rule "Predecessor Compute"
+	when
+		PredecessorRequest(op : operand)
+		not Predecessor(operand == op)
+	then
+		Digit succ;
+		switch (op) {
+		case ZERO:
+			succ = Digit.NINE;
+			break;
+		case ONE:
+			succ = Digit.ZERO;
+			break;
+		case TWO:
+			succ = Digit.ONE;
+			break;
+		case THREE:
+			succ = Digit.TWO;
+			break;
+		case FOUR:
+			succ = Digit.THREE;
+			break;
+		case FIVE:
+			succ = Digit.FOUR;
+			break;
+		case SIX:
+			succ = Digit.FIVE;
+			break;
+		case SEVEN:
+			succ = Digit.SIX;
+			break;
+		case EIGHT:
+			succ = Digit.SEVEN;
+			break;
+		case NINE:
+			succ = Digit.EIGHT;
+			break;
+		default:
+			throw new RuntimeException("Unkonwn digit");
+		}
+		insert(new Predecessor(op, succ));
+end
